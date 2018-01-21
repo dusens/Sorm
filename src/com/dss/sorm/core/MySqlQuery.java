@@ -42,7 +42,7 @@ public class MySqlQuery implements Query {
 		//java.lang.NullPointerException
 		//则证明数据上边的数据不完整，有的为null;
 		List<Emp> list =new MySqlQuery().queryRows("select id,empname,age from emp where age>? and salary>?",
-				Emp.class, new Object[]{10,3000});
+				Emp.class, new Object[]{10,2000});
 		for(Emp e:list) {
 			System.out.println(e.getEmpname());
 		}
