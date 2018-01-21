@@ -41,19 +41,21 @@ public class MySqlQuery implements Query {
 		//这里在查询的时候如果下边报
 		//java.lang.NullPointerException
 		//则证明数据上边的数据不完整，有的为null;
-		List<Emp> list =new MySqlQuery().queryRows("select id,empname,age from emp where age>? and salary>?",
-				Emp.class, new Object[]{10,2000});
-		for(Emp e:list) {
-			System.out.println(e.getEmpname());
-		}
-		String sql2 = "select e.id,e.empname,salary+bonus 'xinshui',age,d.dname 'deptName',d.address 'deptAddr' from emp e "
-				+"join dept d on e.deptId=d.id ";
-		List<EmpVo> list2 = new MySqlQuery().queryRows(sql2,EmpVo.class,null);
-						
-		for(EmpVo e:list2){
-				System.out.println(e.getEmpname()+"-"+e.getDeptAddr()+"-"+e.getXinshui());
-			}
-						
+//		List<Emp> list =new MySqlQuery().queryRows("select id,empname,age from emp where age>? and salary>?",
+//				Emp.class, new Object[]{10,2000});
+//		for(Emp e:list) {
+//			System.out.println(e.getEmpname());
+//		}
+//		String sql2 = "select e.id,e.empname,salary+bonus 'xinshui',age,d.dname 'deptName',d.address 'deptAddr' from emp e "
+//				+"join dept d on e.deptId=d.id ";
+//		List<EmpVo> list2 = new MySqlQuery().queryRows(sql2,EmpVo.class,null);
+//						
+//		for(EmpVo e:list2){
+//				System.out.println(e.getEmpname()+"-"+e.getDeptAddr()+"-"+e.getXinshui());
+//			}
+					
+		Object obj = new MySqlQuery().queryValue("select count(*) from emp where salary>?", new Object[] {1000});
+		System.out.println((Number)obj);
 		}
 	
 	@Override
@@ -207,23 +209,52 @@ public class MySqlQuery implements Query {
 		
 		return list;
 	}
-
+	/**
+	 * 只有一个元素取出一个元素来
+	 */
 	@Override
 	public Object queryUniqueRow(String sql, Class clazz, Object[] params) {
-		// TODO Auto-generated method stub
-		return null;
+		List list = queryRows(sql, clazz, params);
+		return(list==null&&list.size()>0)?null:list.get(0);
+		
 	}
 
 	@Override
 	public Object queryValue(String sql, Object[] params) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		Connection conn = DBManager.getConn();
+		Object value = null; //存储查询结果的对象
+		PreparedStatement ps = null;;
+		ResultSet rs = null;
+		try {
+			
+			
+			ps = conn.prepareStatement(sql);
+			System.out.println(ps);
+			JDBCutils.handleParams(ps, params);
+			
+			rs = ps.executeQuery();
+			
+			while(rs.next()) {
+				//select count(*) from user
+				
+				value = rs.getObject(1);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}finally {
+			DBManager.close(ps, conn);
+		}
+		
+		
+		
+		return value;
 	}
 
 	@Override
 	public Number queryNumber(String sql, Object[] params) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		return (Number)queryValue(sql, params);
 	}
 
 }
