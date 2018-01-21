@@ -14,7 +14,7 @@ import com.dss.sorm.bean.TableInfo;
 import com.dss.sorm.utils.JDBCutils;
 import com.dss.sorm.utils.ReflectUtils;
 @SuppressWarnings("all")
-public abstract class Query {
+public abstract class Query implements Cloneable {
 	/**
 	 * 采用模版方式将jdbc操作封装成模版，便于重用
 	 * @param sql sql语句
@@ -286,4 +286,10 @@ public abstract class Query {
 	 * @return
 	 */
 	public abstract Object queryPagenate(int pageNum,int size);
+	
+	@Override
+	protected Object clone() throws CloneNotSupportedException {
+		// TODO Auto-generated method stub
+		return super.clone();
+	}
 }

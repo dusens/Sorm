@@ -33,7 +33,10 @@ public class Configuration {
 	 * 扫描生成java类的包(po的意思是：Persistence object持久化对象)
 	 */
 	private String poPackage;
-	
+	/**
+	 * 项目实用的查询类是哪一个类
+	 */
+	private String queryClass;
 	
 	public Configuration() {
 	}
@@ -93,6 +96,14 @@ public class Configuration {
 	}
 	public void setPoPackage(String poPackage) {
 		this.poPackage = poPackage;
+	}
+
+	public String getQueryClass() {
+		return queryClass;
+	}
+
+	public void setQueryClass(String queryClass) {
+		this.queryClass = queryClass;
 	} 
 	
 	
