@@ -37,7 +37,14 @@ public class Configuration {
 	 * 项目实用的查询类是哪一个类
 	 */
 	private String queryClass;
-	
+	/**
+	 * 连接池中最小的连结数
+	 */
+	private int poolMinSize;
+	/**
+	 * 连接池中最大的连结数
+	 */
+	private int poolMaxSize;
 	public Configuration() {
 	}
 	
@@ -104,6 +111,22 @@ public class Configuration {
 
 	public void setQueryClass(String queryClass) {
 		this.queryClass = queryClass;
+	}
+
+	public int getPoolMinSize() {
+		return poolMinSize;
+	}
+
+	public void setPoolMinSize(int poolMinSize) {
+		this.poolMinSize = poolMinSize;
+	}
+
+	public int getPoolMaxSize() {
+		return poolMaxSize;
+	}
+
+	public void setPoolMaxSize(int poolMaxSize) {
+		this.poolMaxSize = poolMaxSize;
 	} 
 	
 	

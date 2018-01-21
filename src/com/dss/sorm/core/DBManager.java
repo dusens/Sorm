@@ -35,8 +35,28 @@ public class DBManager {
 		conf.setUser(pros.getProperty("user"));
 		conf.setUsingDB(pros.getProperty("usingDB"));
 		conf.setQueryClass(pros.getProperty("queryClass"));
+		conf.setPoolMaxSize(Integer.parseInt(pros.getProperty("PoolMaxSize")));
+		conf.setPoolMinSize(Integer.parseInt(pros.getProperty("PoolMinSize")));
 	}
 	
+	/**
+	 * 创建新的connection对象
+	 * @return
+	 */
+	public static Connection createConn(){
+		try {
+			Class.forName(conf.getDriver());
+			return DriverManager.getConnection(conf.getUrl(),
+					conf.getUser(),conf.getPwd());     //直接建立连接，后期增加连接池处理，提高效率！！！
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	/**
+	 * 获取connection对象
+	 * @return
+	 */
 	public static Connection getConn(){
 		try {
 			Class.forName(conf.getDriver());
@@ -48,7 +68,12 @@ public class DBManager {
 		}
 	}
 	
-	
+	/**
+	 * 关闭的方法
+	 * @param rs
+	 * @param ps
+	 * @param conn
+	 */
 	public static void close(ResultSet rs,Statement ps,Connection conn){
 		try {
 			if(rs!=null){
