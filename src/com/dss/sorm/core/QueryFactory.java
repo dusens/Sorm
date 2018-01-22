@@ -1,28 +1,35 @@
 package com.dss.sorm.core;
+
 /**
- * 负责根据配置信息创建query对象
  * 创建Query对象的工厂类
- * @author 杜森森
+ * @author gaoqi
  *
  */
 public class QueryFactory {
-	private static Query prototypeObj;//原型对象
-	private static QueryFactory factory = new QueryFactory();
 	
+	private static Query prototypeObj;  //原型对象
 	static {
+
+
+		
 		try {
-		Class c	= Class.forName(DBManager.getConf().getQueryClass()) ;//加载指定的query类
-		prototypeObj = (Query)c.newInstance();
+			Class c = Class.forName(DBManager.getConf().getQueryClass());  ////加载指定的query类
+			prototypeObj = (Query) c.newInstance();
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
+		}  
+		
+		//加载po包下面所有的类，便于重用，提高效率！
+		TableContext.loadPOTables();
+		
+		
 	}
 	
-	private QueryFactory() {
-		
+	private QueryFactory(){  //私有构造器
 	}
-	public static Query createQuery() {
-		
+	
+	
+	public static Query createQuery(){
 		try {
 			return (Query) prototypeObj.clone();
 		} catch (CloneNotSupportedException e) {
@@ -30,4 +37,5 @@ public class QueryFactory {
 			return null;
 		}
 	}
+	
 }

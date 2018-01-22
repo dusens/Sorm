@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Properties;
 
+import com.dss.pool.DBConnPool;
 import com.dss.sorm.bean.Configuration;
 
 /**
@@ -17,7 +18,10 @@ import com.dss.sorm.bean.Configuration;
  */
 public class DBManager {
 	private static Configuration conf;
-	
+	/**
+	 * 连接池对象
+	 */
+	private static  DBConnPool pool ;
 	static {  //静态代码块
 		Properties pros = new Properties();
 		try {
@@ -35,9 +39,14 @@ public class DBManager {
 		conf.setUser(pros.getProperty("user"));
 		conf.setUsingDB(pros.getProperty("usingDB"));
 		conf.setQueryClass(pros.getProperty("queryClass"));
-		conf.setPoolMaxSize(Integer.parseInt(pros.getProperty("PoolMaxSize")));
-		conf.setPoolMinSize(Integer.parseInt(pros.getProperty("PoolMinSize")));
-	}
+		conf.setPoolMaxSize(Integer.parseInt(pros.getProperty("poolMaxSize")));
+		conf.setPoolMinSize(Integer.parseInt(pros.getProperty("poolMinSize")));
+		/**
+		 * 加载tablecontext
+		 */
+		System.out.println(TableContext.class);
+}
+	
 	
 	/**
 	 * 创建新的connection对象
@@ -58,14 +67,10 @@ public class DBManager {
 	 * @return
 	 */
 	public static Connection getConn(){
-		try {
-			Class.forName(conf.getDriver());
-			return DriverManager.getConnection(conf.getUrl(),
-					conf.getUser(),conf.getPwd());     //直接建立连接，后期增加连接池处理，提高效率！！！
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
+		if(pool==null) {			
+			pool=new DBConnPool();
 		}
+		return pool.getConnection();
 	}
 	
 	/**
@@ -89,13 +94,14 @@ public class DBManager {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		try {
-			if(conn!=null){
-				conn.close();
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+//		try {
+//			if(conn!=null){
+//				conn.close();
+//			}
+//		} catch (SQLException e) {
+//			e.printStackTrace();
+//		}
+		pool.close(conn);
 	}
 	
 	public static void close(Statement ps,Connection conn){
@@ -106,22 +112,12 @@ public class DBManager {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		try {
-			if(conn!=null){
-				conn.close();
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+		pool.close(conn);
 	}
 	public static void close(Connection conn){
-		try {
-			if(conn!=null){
-				conn.close();
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+		
+			pool.close(conn);
+		
 	}
 	
 	/**

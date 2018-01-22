@@ -56,7 +56,7 @@ public class MySqlQuery extends Query {
 		//java.lang.NullPointerException
 		//则证明数据上边的数据不完整，有的为null;
 //				
-		Number obj = (Number)new MySqlQuery().queryValue("select count(*) from emp where salary>?", new Object[] {1000});
+		Number obj = (Number)new MySqlQuery().queryValue("select count(*) from emp where salary>?", new Object[] {2000});
 		System.out.println(obj.doubleValue());
 //		testQueryRows();
 		
@@ -67,4 +67,3 @@ public class MySqlQuery extends Query {
 		return null;
 	}
 	}
-

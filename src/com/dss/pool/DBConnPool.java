@@ -7,57 +7,64 @@ import java.util.List;
 
 import com.dss.sorm.core.DBManager;
 
-/*
- * 
+/**
  * 连接池的类
- * @author 杜森森
+ * @author gaoqi
+ *
  */
 public class DBConnPool {
-	public  List<Connection> pool; //连接池对象
 	/**
-	 * 最大
+	 * 连接池对象
 	 */
-	private static final int POOL_MAX_SIZE = DBManager.getConf().getPoolMaxSize();
-	/**
-	 * 最小
-	 */
-	private static final int POOL_MIN_SIZE = DBManager.getConf().getPoolMinSize(); 
+	private  List<Connection> pool;  
 	
 	/**
-	 * 初始化连接池，使池中连接数达到最小值
+	 * 最大连接数
+	 */
+	private static final int POOL_MAX_SIZE = DBManager.getConf().getPoolMaxSize(); 
+	/**
+	 * 最小连接池
+	 */
+	private static final int POOL_MIN_SIZE = DBManager.getConf().getPoolMinSize();  
+	
+	
+	/**
+	 * 初始化连接池，使池中的连接数达到最小值
 	 */
 	public void initPool() {
-		if(pool==null) {
+		if(pool==null){
 			pool = new ArrayList<Connection>();
 		}
 		
-		while(pool.size()<DBConnPool.POOL_MIN_SIZE) {
+		while(pool.size()<DBConnPool.POOL_MIN_SIZE){
 			pool.add(DBManager.createConn());
-			System.out.println("初始化池:池中连结数"+pool.size());
+			System.out.println("初始化池，池中连接数："+pool.size());
 		}
 	}
 	
+	
 	/**
-	 * 从连接池中取出一个链接	
+	 * 从连接池中取出一个连接
 	 * @return
 	 */
 	public synchronized Connection getConnection() {
 		int last_index = pool.size()-1;
-		Connection conn=pool.get(last_index);
-		pool.remove(last_index);//用完之后删掉
+		Connection conn = pool.get(last_index);
+		pool.remove(last_index);
+		
 		return conn;
 	}
 	
 	/**
-	 *  从连接池放一个链接
-	 *  将链接放回池中
+	 * 将连接放回池中
+	 * @param conn
 	 */
-	
-	public synchronized void close(Connection conn) {
-		if(pool.size()>=POOL_MAX_SIZE) {
+	public synchronized void close(Connection conn){
+		
+		if(pool.size()>=POOL_MAX_SIZE){
 			try {
-				if(conn!=null) {
-				conn.close();
+				if(conn!=null){
+					conn.close();
 				}
 			} catch (SQLException e) {
 				e.printStackTrace();
@@ -67,13 +74,9 @@ public class DBConnPool {
 		}
 	}
 	
-		/**
-		 * 初始化池
-		 */
-		public DBConnPool() {
-			
-			initPool();
-		}
 	
+	public DBConnPool() {
+		initPool();
+	}
 	
 }
